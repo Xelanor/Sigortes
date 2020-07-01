@@ -11,6 +11,7 @@
     "axios": "^0.19.2",
     "classnames": "^2.2.6",
     "concurrently": "^5.2.0",
+    "is-empty": "^1.2.0",
     "jwt-decode": "^2.2.0",
     "loglevel": "^1.6.8",
     "react": "^16.13.1",
