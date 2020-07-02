@@ -1,8 +1,10 @@
 const express = require("express");
 const cors = require("cors");
+const socketio = require("socket.io");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const passport = require("passport");
+
 var log = require("loglevel");
 
 require("dotenv").config();
@@ -18,7 +20,7 @@ app.use(
 );
 app.use(bodyParser.json());
 
-app.use(cors());
+app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 app.use(express.json());
 
 app.use(passport.initialize());
@@ -40,6 +42,21 @@ const usersRouter = require("./routes/users");
 
 app.use("/api/users", usersRouter);
 
-app.listen(port, () => {
+var server = app.listen(port, () => {
   log.warn(`Server is running on port: ${port}`);
+});
+
+const io = socketio(server);
+
+io.on("connection", (socket) => {
+  log.warn("We have a new connection.");
+
+  socket.on("online input", ({ online }) => {
+    console.log(online);
+    return io.emit("online output", !online);
+  });
+
+  socket.on("disconnect", () => {
+    log.warn("User had left!!!");
+  });
 });
