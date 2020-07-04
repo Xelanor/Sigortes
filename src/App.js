@@ -8,12 +8,15 @@ import { setCurrentUser, logoutUser } from "./store/actions/authActions";
 import { Provider } from "react-redux";
 import store from "./store/store";
 
-import Navbar from "./components/layout/Navbar";
+import Navbar from "./components/layout/Header";
 import Landing from "./components/layout/Landing";
 import Register from "./containers/auth/Register";
 import Login from "./containers/auth/Login";
-import PrivateRoute from "./components/private-route/RegisteredRoute";
 import Dashboard from "./containers/dashboard/Dashboard";
+
+import AdminRoute from "./components/private-route/AdminRoute";
+import RegisteredRoute from "./components/private-route/RegisteredRoute";
+import CustomerServiceRoute from "./components/private-route/CustomerServiceRoute";
 
 if (localStorage.jwtToken) {
   const token = localStorage.jwtToken;
@@ -34,11 +37,15 @@ class App extends Component {
         <Router>
           <div className="App">
             <Navbar />
-            <Route exact path="/" component={Landing} />
-            <Route exact path="/register" component={Register} />
-            <Route exact path="/login" component={Login} />
             <Switch>
-              <PrivateRoute exact path="/dashboard" component={Dashboard} />
+              <Route exact path="/" component={Landing} />
+              <Route exact path="/login" component={Login} />
+              <Route exact path="/register" component={Register} />
+              <CustomerServiceRoute
+                exact
+                path="/dashboard"
+                component={Dashboard}
+              />
             </Switch>
           </div>
         </Router>

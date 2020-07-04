@@ -4,8 +4,7 @@ const socketio = require("socket.io");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const passport = require("passport");
-
-var log = require("loglevel");
+const path = require("path");
 
 require("dotenv").config();
 
@@ -20,7 +19,8 @@ app.use(
 );
 app.use(bodyParser.json());
 
-app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+// app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+app.use(cors());
 app.use(express.json());
 
 app.use(passport.initialize());
@@ -31,32 +31,37 @@ mongoose.connect(uri, {
   useNewUrlParser: true,
   useCreateIndex: true,
   useUnifiedTopology: true,
+  useFindAndModify: false,
 });
 const connection = mongoose.connection;
 connection.once("open", () => {
-  log.warn("MongoDB database connection established successfully");
+  console.log("MongoDB database connection established successfully");
 });
 
 // Routes
 const usersRouter = require("./routes/users");
+const roomsRouter = require("./routes/rooms");
+const videoRouter = require("./routes/video");
+
+// ADD THIS LINE
+app.use(express.static("build"));
 
 app.use("/api/users", usersRouter);
+app.use("/api/rooms", roomsRouter);
+app.use("/api/video", videoRouter);
+
+// If no API routes are hit, send the React app
+app.use(function (req, res) {
+  res.sendFile(path.join(__dirname, "build/index.html"));
+});
 
 var server = app.listen(port, () => {
-  log.warn(`Server is running on port: ${port}`);
+  console.log(`Server is running on port: ${port}`);
 });
 
 const io = socketio(server);
 
 io.on("connection", (socket) => {
-  log.warn("We have a new connection.");
-
-  socket.on("online input", ({ online }) => {
-    console.log(online);
-    return io.emit("online output", !online);
-  });
-
-  socket.on("disconnect", () => {
-    log.warn("User had left!!!");
-  });
+  require("./sockets/socket")(io, socket);
+  return io;
 });

@@ -61,6 +61,7 @@ router.post("/login", (req, res) => {
           name: user.name,
           surname: user.surname,
           role: user.role,
+          room: user.room ? user.room : "",
         };
         jwt.sign(
           payload,
