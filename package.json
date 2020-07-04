@@ -8,12 +8,14 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
+    "autoprefixer": "^9.8.4",
     "axios": "^0.19.2",
     "classnames": "^2.2.6",
     "concurrently": "^5.2.0",
     "is-empty": "^1.2.0",
     "jwt-decode": "^2.2.0",
     "loglevel": "^1.6.8",
+    "postcss-cli": "^7.1.1",
     "query-string": "^6.13.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
@@ -23,6 +25,7 @@
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
     "socket.io-client": "^2.3.0",
+    "tailwindcss": "^1.4.6",
     "twilio-video": "^2.2.0"
   },
   "scripts": {
@@ -32,7 +35,8 @@
     "eject": "react-scripts eject",
     "server": "nodemon server --prefix backend",
     "client": "npm start",
-    "dev": "concurrently \"npm run server\" \"npm run client\""
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "buildcss": "postcss css/tailwind.css -o public/build/tailwind.css"
   },
   "proxy": "http://localhost:5000",
   "eslintConfig": {
