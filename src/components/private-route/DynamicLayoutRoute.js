@@ -3,21 +3,11 @@ import { Route, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import Header from "../../components/layout/Header";
-import AdminHeader from "../../components/layout/AdminHeader";
 
 const PrivateRoute = (props) => {
   const { component: Component, layout, auth, ...rest } = props;
   const actualRouteComponent = (
-    <Route
-      {...rest}
-      render={(props) =>
-        auth.user.role === "admin" ? (
-          <Component {...props} />
-        ) : (
-          <Redirect to="/" />
-        )
-      }
-    />
+    <Route {...rest} render={(props) => <Component {...props} />} />
   );
 
   switch (layout) {
@@ -32,7 +22,7 @@ const PrivateRoute = (props) => {
     case "DASHBOARD_NAV": {
       return (
         <>
-          <AdminHeader />
+          <Header />
           {actualRouteComponent}
         </>
       );

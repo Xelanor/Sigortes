@@ -46,22 +46,19 @@ class Navbar extends Component {
     return (
       <div>
         <nav className="bg-gray-800">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-1">
             <div className="flex items-center justify-between h-16">
               <div className="flex items-center">
                 <Link to="/">
                   <div className="flex-shrink-0">
-                    <img className="w-36" src={Logo} alt="logo" />
+                    <img className="w-36" src={Logo} alt="Workflow logo" />
                   </div>
                 </Link>
                 <div className="hidden md:block">
                   <div className="ml-10 flex items-baseline">
-                    <NavElement text="Aracınız" link="/" />
-                    <NavElement text="Sağlığınız" link="/" />
-                    <NavElement text="Eviniz" link="/" />
-                    <NavElement text="Giriş Yap" link="/login" />
-                    <NavElement text="Kayıt Ol" link="/register" />
                     <NavElement text="Admin" link="/admin" />
+                    <NavElement text="Görüşmeler" link="/admin/meetings" />
+                    <NavElement text="Ayarlar" link="/admin/settings" />
                   </div>
                 </div>
               </div>
@@ -206,33 +203,18 @@ class Navbar extends Component {
             <div className="px-2 pt-2 pb-3 sm:px-3">
               <MobileNavElement
                 onClickHandler={this.onClickHandler}
-                text="Aracınız"
-                link="/"
-              />
-              <MobileNavElement
-                onClickHandler={this.onClickHandler}
-                text="Sağlığınız"
-                link="/"
-              />
-              <MobileNavElement
-                onClickHandler={this.onClickHandler}
-                text="Eviniz"
-                link="/"
-              />
-              <MobileNavElement
-                onClickHandler={this.onClickHandler}
-                text="Giriş Yap"
-                link="/login"
-              />
-              <MobileNavElement
-                onClickHandler={this.onClickHandler}
-                text="Kayıt Ol"
-                link="/register"
-              />
-              <MobileNavElement
-                onClickHandler={this.onClickHandler}
                 text="Admin"
                 link="/admin"
+              />
+              <MobileNavElement
+                onClickHandler={this.onClickHandler}
+                text="Görüşmeler"
+                link="/admin/meetings"
+              />
+              <MobileNavElement
+                onClickHandler={this.onClickHandler}
+                text="Ayarlar"
+                link="/admin/settings"
               />
             </div>
             <div className="pt-4 pb-3 border-t border-gray-700">
