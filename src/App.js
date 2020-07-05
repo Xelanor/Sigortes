@@ -13,9 +13,12 @@ import Landing from "./components/layout/Landing";
 import Homepage from "./components/layout/Homepage";
 import Register from "./containers/auth/Register";
 import Login from "./containers/auth/Login";
+import ForgotPassword from "./containers/auth/ForgotPassword";
+import ResetPassword from "./containers/auth/ResetPassword";
 import CustomerService from "./containers/dashboard/CustomerService";
 import AdminPage from "./containers/admin/AdminPage";
 import MeetingsPage from "./containers/admin/MeetingsPage";
+import Payment from "./containers/dashboard/PaymentTest";
 
 import AdminRoute from "./components/private-route/AdminRoute";
 import RegisteredRoute from "./components/private-route/RegisteredRoute";
@@ -49,6 +52,16 @@ class App extends Component {
               />
               <DynamicLayoutRoute exact path="/login" component={Login} />
               <DynamicLayoutRoute exact path="/register" component={Register} />
+              <DynamicLayoutRoute
+                exact
+                path="/sifremi-unuttum"
+                component={ForgotPassword}
+              />
+              <DynamicLayoutRoute
+                exact
+                path="/sifre-reset/:token"
+                component={ResetPassword}
+              />
               <AdminRoute
                 exact
                 path="/admin"
@@ -67,6 +80,12 @@ class App extends Component {
                 component={() => (
                   <div className="text-3xl justify-center flex">Ayarlar</div>
                 )}
+                layout="DASHBOARD_NAV"
+              />
+              <AdminRoute
+                exact
+                path="/admin/payment"
+                component={Payment}
                 layout="DASHBOARD_NAV"
               />
               <CustomerServiceRoute

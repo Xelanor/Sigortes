@@ -2,16 +2,16 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { loginUser } from "../../store/actions/authActions";
+import { resetPassword } from "../../store/actions/authActions";
 import classnames from "classnames";
 
-class Login extends Component {
+class ResetPassword extends Component {
   constructor() {
     super();
     this.state = {
-      email: "",
       password: "",
       errors: {},
+      success: {},
     };
   }
 
@@ -23,12 +23,17 @@ class Login extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.auth.isAuthenticated) {
-      this.props.history.push("/dashboard"); // push user to dashboard when they login
-    }
     if (nextProps.errors) {
       this.setState({
         errors: nextProps.errors,
+      });
+    }
+    if (nextProps.auth.password_changed) {
+      this.setState({
+        success: {
+          text:
+            "Şifreniz başarıyla değiştirilmiştir. Tekrar giriş yapabilirsiniz.",
+        },
       });
     }
   }
@@ -37,17 +42,17 @@ class Login extends Component {
     this.setState({ [e.target.name]: e.target.value });
   };
 
-  onSubmit = (e) => {
+  onSubmit = async (e) => {
     e.preventDefault();
     const userData = {
-      email: this.state.email,
       password: this.state.password,
+      token: this.props.match.params.token,
     };
-    this.props.loginUser(userData);
+    this.props.resetPassword(userData);
   };
 
   render() {
-    const { errors } = this.state;
+    const { errors, success } = this.state;
     return (
       <div
         style={{ minHeight: "calc(100vh - 4rem)" }}
@@ -56,17 +61,8 @@ class Login extends Component {
         <div class="max-w-md w-full">
           <div>
             <h2 class="mt-6 text-center text-3xl leading-9 font-extrabold text-gray-900">
-              Sigortes hesabınıza giriş yapın
+              Lütfen yeni bir şifre belirleyin
             </h2>
-            <p class="mt-4 text-center text-sm leading-5 text-gray-600">
-              veya{" "}
-              <Link
-                to="/register"
-                class="font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150"
-              >
-                hemen üye olun!
-              </Link>
-            </p>
           </div>
           <form class="mt-6" onSubmit={this.onSubmit}>
             <input type="hidden" name="remember" value="true" />
@@ -74,49 +70,19 @@ class Login extends Component {
               <div>
                 <input
                   onChange={this.onChange}
-                  value={this.state.email}
-                  error={errors.email}
-                  aria-label="Email address"
-                  name="email"
-                  type="email"
-                  required
-                  class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:shadow-outline-blue focus:border-blue-300 focus:z-10 sm:text-sm sm:leading-5"
-                  placeholder="E-posta Adresi"
-                />
-              </div>
-              <span className="red-text">
-                {errors.email}
-                {errors.emailnotfound}
-              </span>
-              <div class="-mt-px">
-                <input
-                  onChange={this.onChange}
                   value={this.state.password}
                   error={errors.password}
-                  aria-label="Password"
                   name="password"
                   type="password"
                   required
-                  class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:shadow-outline-blue focus:border-blue-300 focus:z-10 sm:text-sm sm:leading-5"
-                  placeholder="Şifre"
+                  class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:shadow-outline-blue focus:border-blue-300 focus:z-10 sm:text-sm sm:leading-5"
+                  placeholder="Yeni Şifreniz"
                 />
               </div>
-              <span className="red-text">
-                {errors.password}
-                {errors.passwordincorrect}
-              </span>
+              <span className="red-text">{errors.token}</span>
+              <span className="red-text">{errors.password}</span>
+              <span className="green-text">{success.text}</span>
             </div>
-            <div class="mt-6 flex items-center justify-between">
-              <div class="text-sm leading-5">
-                <Link
-                  to="/sifremi-unuttum"
-                  class="font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:underline transition ease-in-out duration-150"
-                >
-                  Şifrenizi mi unuttunuz?
-                </Link>
-              </div>
-            </div>
-
             <div class="mt-6">
               <button
                 type="submit"
@@ -135,7 +101,7 @@ class Login extends Component {
                     />
                   </svg>
                 </span>
-                Giriş Yap
+                Şifremi Belirle
               </button>
             </div>
           </form>
@@ -145,8 +111,8 @@ class Login extends Component {
   }
 }
 
-Login.propTypes = {
-  loginUser: PropTypes.func.isRequired,
+ResetPassword.propTypes = {
+  resetPassword: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
   errors: PropTypes.object.isRequired,
 };
@@ -154,4 +120,4 @@ const mapStateToProps = (state) => ({
   auth: state.auth,
   errors: state.errors,
 });
-export default connect(mapStateToProps, { loginUser })(Login);
+export default connect(mapStateToProps, { resetPassword })(ResetPassword);

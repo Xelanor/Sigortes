@@ -1,10 +1,71 @@
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
+let crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const validateRegisterInput = require("../validation/register");
 const validateLoginInput = require("../validation/login");
 const User = require("../models/user");
+
+// TODO: Mailer func needed
+router.post("/forgotPassword", (req, res, next) => {
+  if (req.body.email === "") {
+    return res.status(404).json({ email: "E-posta geçersiz" });
+  }
+
+  User.findOne({ email: req.body.email }).then((user) => {
+    if (!user) {
+      return res.status(404).json({ emailnotfound: "E-posta bulunamadı" });
+    } else {
+      const token = crypto.randomBytes(20).toString("hex");
+      User.findOneAndUpdate(
+        { email: req.body.email },
+        {
+          $set: {
+            resetPasswordToken: token,
+            resetPasswordExpires: Date.now() + 86400000, // 1 day in milliseconds
+          },
+        }
+      )
+        .then((req) => res.json("recovery email sent"))
+        .catch((err) => res.status(400).json("Error: " + err));
+    }
+  });
+});
+
+// TODO: Check password quality
+router.post("/resetPassword", (req, res, next) => {
+  if (req.body.token === "") {
+    return res
+      .status(404)
+      .json({ token: "Şifre sıfırlama bağlantısı geçersizdir." });
+  }
+
+  User.findOne({ resetPasswordToken: req.body.token }).then((user) => {
+    if (!user) {
+      return res
+        .status(404)
+        .json({ token: "Şifre sıfırlama bağlantısı geçersizdir." });
+    } else {
+      bcrypt
+        .genSalt(10, (err, salt) => {
+          bcrypt.hash(req.body.password, salt, (err, hash) => {
+            user
+              .update({
+                password: hash,
+                resetPasswordToken: null,
+                resetPasswordExpires: null,
+              })
+              .then(() => {
+                res.status(200).send({ message: "password updated" });
+              });
+          });
+        })
+        .then((req) => res.json("password changed"))
+        .catch((err) => res.status(400).json("Error: " + err));
+    }
+  });
+});
 
 router.post("/register", (req, res) => {
   const { errors, isValid } = validateRegisterInput(req.body);

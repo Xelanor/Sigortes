@@ -1,7 +1,13 @@
 import axios from "axios";
 import setAuthToken from "../../utils/setAuthToken";
 import jwt_decode from "jwt-decode";
-import { GET_ERRORS, SET_CURRENT_USER, USER_LOADING } from "./types";
+import {
+  GET_ERRORS,
+  SET_CURRENT_USER,
+  USER_LOADING,
+  FORGOT_PASSWORD,
+  RESET_PASSWORD,
+} from "./types";
 
 // Register User
 export const registerUser = (userData, history) => (dispatch) => {
@@ -32,6 +38,38 @@ export const loginUser = (userData) => (dispatch) => {
       // Set current user
       dispatch(setCurrentUser(decoded));
     })
+    .catch((err) =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data,
+      })
+    );
+};
+
+export const forgotPassword = (userData) => (dispatch) => {
+  axios
+    .post("/api/users/forgotPassword", userData)
+    .then((res) =>
+      dispatch({
+        type: FORGOT_PASSWORD,
+      })
+    )
+    .catch((err) =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data,
+      })
+    );
+};
+
+export const resetPassword = (userData) => (dispatch) => {
+  axios
+    .post("/api/users/resetPassword", userData)
+    .then((res) =>
+      dispatch({
+        type: RESET_PASSWORD,
+      })
+    )
     .catch((err) =>
       dispatch({
         type: GET_ERRORS,
