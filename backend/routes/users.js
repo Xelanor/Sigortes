@@ -92,7 +92,31 @@ router.post("/register", (req, res) => {
           newUser.password = hash;
           newUser
             .save()
-            .then((user) => res.json(user))
+            .then((user) => {
+              const payload = {
+                id: user.id,
+                name: user.name,
+                surname: user.surname,
+                role: user.role,
+                room: user.room ? user.room : "",
+              };
+              jwt.sign(
+                payload,
+                "secret",
+                {
+                  expiresIn: 31556926,
+                },
+                (err, token) => {
+                  if (err) console.error("There is some error in token", err);
+                  else {
+                    res.json({
+                      success: true,
+                      token: `Bearer ${token}`,
+                    });
+                  }
+                }
+              );
+            })
             .catch((err) => console.log(err));
         });
       });
