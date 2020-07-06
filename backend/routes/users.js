@@ -5,21 +5,23 @@ let crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const validateRegisterInput = require("../validation/register");
 const validateLoginInput = require("../validation/login");
+const mailer = require("../utils/mailer");
 const User = require("../models/user");
 
 // TODO: Mailer func needed
 router.post("/forgotPassword", (req, res, next) => {
-  if (req.body.email === "") {
+  const mail = req.body.email;
+  if (mail === "") {
     return res.status(404).json({ email: "E-posta geçersiz" });
   }
 
-  User.findOne({ email: req.body.email }).then((user) => {
+  User.findOne({ email: mail }).then((user) => {
     if (!user) {
       return res.status(404).json({ emailnotfound: "E-posta bulunamadı" });
     } else {
       const token = crypto.randomBytes(20).toString("hex");
       User.findOneAndUpdate(
-        { email: req.body.email },
+        { email: mail },
         {
           $set: {
             resetPasswordToken: token,
@@ -27,7 +29,10 @@ router.post("/forgotPassword", (req, res, next) => {
           },
         }
       )
-        .then((req) => res.json("recovery email sent"))
+        .then((req) => {
+          mailer({ to: mail, purpose: "forgotPassword" });
+          res.json("recovery email sent");
+        })
         .catch((err) => res.status(400).json("Error: " + err));
     }
   });
@@ -109,6 +114,7 @@ router.post("/register", (req, res) => {
                 (err, token) => {
                   if (err) console.error("There is some error in token", err);
                   else {
+                    mailer({ to: req.body.email, purpose: "newUser" });
                     res.json({
                       success: true,
                       token: `Bearer ${token}`,

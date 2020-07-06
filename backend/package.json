@@ -21,6 +21,7 @@
     "iyzipay": "^2.0.48",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.20",
+    "nodemailer": "^6.4.10",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "socket.io": "^2.3.0",
