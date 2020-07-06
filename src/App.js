@@ -19,6 +19,7 @@ import CustomerService from "./containers/dashboard/CustomerService";
 import AdminPage from "./containers/admin/AdminPage";
 import MeetingsPage from "./containers/admin/MeetingsPage";
 import Payment from "./containers/dashboard/payment/PaymentTest";
+import ProfilePage from "./containers/dashboard/ProfilePage";
 
 import AdminRoute from "./components/private-route/AdminRoute";
 import RegisteredRoute from "./components/private-route/RegisteredRoute";
@@ -52,6 +53,7 @@ class App extends Component {
               />
               <DynamicLayoutRoute exact path="/login" component={Login} />
               <DynamicLayoutRoute exact path="/register" component={Register} />
+              <RegisteredRoute exact path="/profil" component={ProfilePage} />
               <DynamicLayoutRoute
                 exact
                 path="/sifremi-unuttum"

@@ -125,14 +125,14 @@ class Navbar extends Component {
                           aria-labelledby="user-menu"
                         >
                           <Link
-                            to="/profile"
+                            to="/profil"
                             className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                             role="menuitem"
                           >
                             Profil
                           </Link>
                           <Link
-                            to="/profile/settings"
+                            to="/profil/settings"
                             className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                             role="menuitem"
                           >
@@ -243,13 +243,13 @@ class Navbar extends Component {
               </div>
               <div className="mt-3 px-2">
                 <Link
-                  to="/profile"
+                  to="/profil"
                   className="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700"
                 >
                   Profil
                 </Link>
                 <Link
-                  to="/profile/settings"
+                  to="/profil/settings"
                   className="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700"
                 >
                   Ayarlar

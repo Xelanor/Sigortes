@@ -34,9 +34,25 @@ const MobileNavElement = ({ text, link, onClickHandler }) => {
 };
 
 class Navbar extends Component {
+  container = React.createRef();
   state = {
     dropdown: false,
     mobileMenu: false,
+  };
+
+  componentDidMount() {
+    document.addEventListener("mousedown", this.handleClickOutside);
+  }
+  componentWillUnmount() {
+    document.removeEventListener("mousedown", this.handleClickOutside);
+  }
+  handleClickOutside = (event) => {
+    if (
+      this.container.current &&
+      !this.container.current.contains(event.target)
+    ) {
+      this.setState({ dropdown: false });
+    }
   };
 
   onClickHandler = () => {
@@ -100,7 +116,7 @@ class Navbar extends Component {
                         </svg>
                       </button>
                       <div className="ml-3 relative">
-                        <div>
+                        <div ref={this.container}>
                           <button
                             className="max-w-xs flex items-center text-sm rounded-full text-white focus:outline-none focus:shadow-solid"
                             id="user-menu"
@@ -129,7 +145,7 @@ class Navbar extends Component {
                           leaveTo="transform opacity-0 scale-95"
                         >
                           <div
-                            className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg"
+                            className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg z-50"
                             style={{
                               display: this.state.dropdown ? "" : "none",
                             }}
@@ -141,14 +157,14 @@ class Navbar extends Component {
                               aria-labelledby="user-menu"
                             >
                               <Link
-                                to="/profile"
+                                to="/profil"
                                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                                 role="menuitem"
                               >
                                 Profil
                               </Link>
                               <Link
-                                to="/profile/settings"
+                                to="/profil/settings"
                                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                                 role="menuitem"
                               >
@@ -276,13 +292,13 @@ class Navbar extends Component {
                   </div>
                   <div className="mt-3 px-2">
                     <Link
-                      to="/profile"
+                      to="/profil"
                       className="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700"
                     >
                       Profil
                     </Link>
                     <Link
-                      to="/profile/settings"
+                      to="/profil/settings"
                       className="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700"
                     >
                       Ayarlar
