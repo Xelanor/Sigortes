@@ -18,7 +18,7 @@ import ResetPassword from "./containers/auth/ResetPassword";
 import CustomerService from "./containers/dashboard/CustomerService";
 import AdminPage from "./containers/admin/AdminPage";
 import MeetingsPage from "./containers/admin/MeetingsPage";
-import Payment from "./containers/dashboard/PaymentTest";
+import Payment from "./containers/dashboard/payment/PaymentTest";
 
 import AdminRoute from "./components/private-route/AdminRoute";
 import RegisteredRoute from "./components/private-route/RegisteredRoute";

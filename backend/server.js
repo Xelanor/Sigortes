@@ -42,6 +42,7 @@ connection.once("open", () => {
 const usersRouter = require("./routes/users");
 const roomsRouter = require("./routes/rooms");
 const videoRouter = require("./routes/video");
+const paymentRouter = require("./routes/payment");
 
 // ADD THIS LINE
 app.use(express.static("build"));
@@ -49,6 +50,7 @@ app.use(express.static("build"));
 app.use("/api/users", usersRouter);
 app.use("/api/rooms", roomsRouter);
 app.use("/api/video", videoRouter);
+app.use("/api/payment", paymentRouter);
 
 // If no API routes are hit, send the React app
 app.use(function (req, res) {

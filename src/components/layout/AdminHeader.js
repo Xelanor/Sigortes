@@ -59,6 +59,7 @@ class Navbar extends Component {
                     <NavElement text="Admin" link="/admin" />
                     <NavElement text="Görüşmeler" link="/admin/meetings" />
                     <NavElement text="Ayarlar" link="/admin/settings" />
+                    <NavElement text="Ödeme" link="/admin/payment" />
                   </div>
                 </div>
               </div>
@@ -215,6 +216,11 @@ class Navbar extends Component {
                 onClickHandler={this.onClickHandler}
                 text="Ayarlar"
                 link="/admin/settings"
+              />
+              <MobileNavElement
+                onClickHandler={this.onClickHandler}
+                text="Ödeme"
+                link="/admin/payment"
               />
             </div>
             <div className="pt-4 pb-3 border-t border-gray-700">
