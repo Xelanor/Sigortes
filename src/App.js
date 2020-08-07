@@ -20,6 +20,7 @@ import AdminPage from "./containers/admin/AdminPage";
 import MeetingsPage from "./containers/admin/MeetingsPage";
 import Payment from "./containers/dashboard/payment/PaymentTest";
 import ProfilePage from "./containers/dashboard/ProfilePage";
+import VideoMeeting from "./containers/video/VideoMeeting";
 
 import AdminRoute from "./components/private-route/AdminRoute";
 import RegisteredRoute from "./components/private-route/RegisteredRoute";
@@ -89,6 +90,11 @@ class App extends Component {
                 path="/admin/payment"
                 component={Payment}
                 layout="DASHBOARD_NAV"
+              />
+              <AdminRoute
+                exact
+                path="/video-gorusme"
+                component={VideoMeeting}
               />
               <CustomerServiceRoute
                 exact

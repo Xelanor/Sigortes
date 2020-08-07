@@ -5,12 +5,14 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const passport = require("passport");
 const path = require("path");
+const morgan = require("morgan");
 
 require("dotenv").config();
 
 const app = express();
 const port = process.env.PORT || 5000;
 
+app.use(morgan("dev"));
 // Bodyparser middleware
 app.use(
   bodyParser.urlencoded({

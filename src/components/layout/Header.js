@@ -115,8 +115,8 @@ class Navbar extends Component {
                           />
                         </svg>
                       </button>
-                      <div className="ml-3 relative">
-                        <div ref={this.container}>
+                      <div ref={this.container} className="ml-3 relative">
+                        <div>
                           <button
                             className="max-w-xs flex items-center text-sm rounded-full text-white focus:outline-none focus:shadow-solid"
                             id="user-menu"

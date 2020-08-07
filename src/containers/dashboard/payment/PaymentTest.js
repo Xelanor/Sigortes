@@ -225,7 +225,7 @@ class Payment extends Component {
         page = (
           <div className="max-w-md w-full mt-8">
             <div id="PaymentForm">
-              <div className="mb-6">
+              {/* <div className="mb-6">
                 <Cards
                   cvc={this.state.cvc}
                   expiry={this.state.expiry}
@@ -234,7 +234,7 @@ class Payment extends Component {
                   number={this.state.number}
                   callback={this.handleCallback}
                 />
-              </div>
+              </div> */}
               <form onSubmit={this.handleSubmit}>
                 <div className="rounded-md shadow-sm">
                   <div>
@@ -324,20 +324,71 @@ class Payment extends Component {
       // TODO: Forma adres bölümü
       <div
         style={{ minHeight: "calc(100vh - 4rem)" }}
-        className="flex justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8"
+        className="bg-gray-50 py-12 px-4 sm:px-6 lg:px-8"
       >
-        <div className="flex flex-col w-full items-center">
-          <div className="max-w-lg w-full">
-            <div className="border-t border-b border-gray-300">
-              <div className="my-2 px-1 flex justify-between items-center">
-                <div className="text-xl leading-7 text-gray-500">Senelik</div>
-                <div className="text-3xl leading-8 font-bold tracking-tight text-gray-900 sm:text-4xl sm:leading-10">
-                  1200 TL
+        <div className="max-w-screen-xl flex justify-center mx-auto">
+          <div className="flex justify-center w-3/4">{page}</div>
+          <div className="justify-center w-1/4 h-full block">
+            <div className="flex flex-col w-full ">
+              <button
+                type="submit"
+                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out"
+              >
+                <span className="absolute left-0 inset-y-0 flex items-center pl-3">
+                  <svg
+                    className="h-5 w-5 text-indigo-500 group-hover:text-indigo-400 transition ease-in-out duration-150"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </span>
+                Ödeme Yap
+              </button>
+              <div className="border p-4 my-4">
+                <div className="flex mb-2">
+                  <div className="text-xl font-medium">Sipariş Özeti</div>
+                </div>
+                <div className="flex items-center justify-between mb-1">
+                  <div className="text-sm">Ürün Toplamı</div>
+                  <div className="text-base">1200 TL</div>
+                </div>
+                <div className="flex items-center justify-between border-b pb-4">
+                  <div className="text-sm">Vergiler Toplamı(%8)</div>
+                  <div className="text-base">216 TL</div>
+                </div>
+                <div className="flex items-center justify-between pt-4">
+                  <div className="text-xl">Toplam</div>
+                  <div className="text-xl text-sigortes font-semibold ">
+                    1416 TL
+                  </div>
                 </div>
               </div>
+              <button
+                type="submit"
+                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm leading-5 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-500 focus:outline-none focus:border-indigo-700 focus:shadow-outline-indigo active:bg-indigo-700 transition duration-150 ease-in-out"
+              >
+                <span className="absolute left-0 inset-y-0 flex items-center pl-3">
+                  <svg
+                    className="h-5 w-5 text-indigo-500 group-hover:text-indigo-400 transition ease-in-out duration-150"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </span>
+                Ödeme Yap
+              </button>
             </div>
           </div>
-          {page}
         </div>
       </div>
     );
