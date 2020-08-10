@@ -72,7 +72,7 @@ class MeetingsPage extends Component {
                   <h1>Yok</h1>
                 ) : (
                   this.state.meetings.map((meeting) => {
-                    return <MeetingRow meeting={meeting} />;
+                    return <MeetingRow key={meeting.sid} meeting={meeting} />;
                   })
                 )}
               </tbody>

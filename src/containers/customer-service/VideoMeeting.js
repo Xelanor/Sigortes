@@ -7,14 +7,13 @@ import {
   Home,
   LocalHospital,
 } from "@material-ui/icons";
-import Peer from "peerjs";
 import classNames from "classnames";
 
 class VideoMeeting extends Component {
   state = {
     stream: null,
     participantStream: null,
-    hostPeer: null,
+    guestPeer: null,
     form: {
       meetingChoice: "",
       name: "",
@@ -26,16 +25,6 @@ class VideoMeeting extends Component {
   participantRef = createRef();
 
   componentDidMount() {
-    var form = this.state.form;
-    form.meetingChoice = this.props.meetingChoice;
-    this.setState({ form });
-
-    const myPeer = new Peer(undefined, {
-      path: "/peerjs",
-      host: "/",
-      port: "5000",
-    });
-
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then((stream) => {
@@ -43,53 +32,24 @@ class VideoMeeting extends Component {
         if (this.userVideo.current) {
           this.userVideo.current.srcObject = stream;
         }
-        myPeer.on("call", (call) => {
+        this.props.myPeer.on("call", (call) => {
           call.answer(stream);
           call.on("stream", (userVideoStream) => {
-            console.log(userVideoStream);
             this.setState({ participantStream: userVideoStream });
             this.participantRef.current.srcObject = userVideoStream;
           });
         });
-        this.props.socket.on("host-peer-id", (peer) => {
-          this.setState({ hostPeer: peer });
-          var call = myPeer.call(peer, stream);
-          call.on("stream", (userVideoStream) => {
-            console.log(userVideoStream);
-            this.setState({ participantStream: userVideoStream });
-            this.participantRef.current.srcObject = userVideoStream;
-          });
+        const call = this.props.myPeer.call(this.props.guestPeer, stream);
+        call.on("stream", (userVideoStream) => {
+          this.setState({ participantStream: userVideoStream });
+          this.participantRef.current.srcObject = userVideoStream;
         });
       });
 
-    myPeer.on("open", (id) => {
-      this.props.socket.emit("guest-chat-started", {
-        room: this.props.room,
-        peer: id,
-      });
+    this.props.socket.on("filling-form", (form) => {
+      this.setState({ form });
     });
   }
-
-  onChoiceClick = (choice) => {
-    var form = this.state.form;
-    var meetingChoice = form.meetingChoice;
-    if (meetingChoice === choice) {
-      form.meetingChoice = "";
-      this.setState({ form });
-      this.props.socket.emit("fill-form", { form, room: this.props.room });
-    } else {
-      form.meetingChoice = choice;
-      this.setState({ form });
-      this.props.socket.emit("fill-form", { form, room: this.props.room });
-    }
-  };
-
-  onChange = (e) => {
-    var form = this.state.form;
-    form[e.target.name] = e.target.value;
-    this.setState({ form });
-    this.props.socket.emit("fill-form", { form, room: this.props.room });
-  };
 
   render() {
     let UserVideo;
@@ -117,12 +77,9 @@ class VideoMeeting extends Component {
     return (
       <div
         style={{ minHeight: "calc(100vh - 6.5rem)" }}
-        className="flex mx-auto p-4 bg-gray-900"
+        className="flex mx-auto p-4 bg-gray-900 w-full"
       >
         <div className="">
-          {/* <div className="text-3xl font-medium text-gray-900 mb-4">
-            Berke bey
-          </div> */}
           <div
             style={{
               width: 800,
@@ -185,7 +142,6 @@ class VideoMeeting extends Component {
           <div className="flex justify-center">
             <div className="flex mb-4">
               <div
-                onClick={() => this.onChoiceClick("car")}
                 className={classNames({
                   "flex flex-col items-center justify-center h-40 w-48 rounded-lg mr-16 cursor-pointer select-none": true,
                   "bg-white text-sigortes":
@@ -203,7 +159,6 @@ class VideoMeeting extends Component {
                 </div>
               </div>
               <div
-                onClick={() => this.onChoiceClick("house")}
                 className={classNames({
                   "flex flex-col items-center justify-center h-40 w-48 rounded-lg mr-16 cursor-pointer select-none": true,
                   "bg-white text-sigortes":
@@ -221,7 +176,6 @@ class VideoMeeting extends Component {
                 </div>
               </div>
               <div
-                onClick={() => this.onChoiceClick("health")}
                 className={classNames({
                   "flex flex-col items-center justify-center h-40 w-48 rounded-lg cursor-pointer select-none": true,
                   "bg-white text-sigortes":
@@ -254,7 +208,6 @@ class VideoMeeting extends Component {
                   name="name"
                   type="text"
                   placeholder="Kerem"
-                  onChange={this.onChange}
                   value={this.state.form.name}
                 ></input>
               </div>
@@ -270,7 +223,6 @@ class VideoMeeting extends Component {
                   name="surname"
                   type="text"
                   placeholder="Yılmaz"
-                  onChange={this.onChange}
                   value={this.state.form.surname}
                 ></input>
               </div>

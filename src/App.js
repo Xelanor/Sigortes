@@ -8,19 +8,18 @@ import { setCurrentUser, logoutUser } from "./store/actions/authActions";
 import { Provider } from "react-redux";
 import store from "./store/store";
 
-import Header from "./components/layout/Header";
-import Landing from "./components/layout/Landing";
 import Homepage from "./components/layout/Homepage";
 import Register from "./containers/auth/Register";
 import Login from "./containers/auth/Login";
 import ForgotPassword from "./containers/auth/ForgotPassword";
 import ResetPassword from "./containers/auth/ResetPassword";
-import CustomerService from "./containers/dashboard/CustomerService";
+import CustomerServicePage from "./containers/customer-service/CustomerServicePage";
 import AdminPage from "./containers/admin/AdminPage";
 import MeetingsPage from "./containers/admin/MeetingsPage";
 import Payment from "./containers/dashboard/payment/PaymentTest";
 import ProfilePage from "./containers/dashboard/ProfilePage";
-import VideoMeeting from "./containers/video/VideoMeeting";
+import VideoMeeting from "./containers/video/MeetingPage";
+import VideoMeetingTest from "./containers/video/VideoMeetingTest";
 
 import AdminRoute from "./components/private-route/AdminRoute";
 import RegisteredRoute from "./components/private-route/RegisteredRoute";
@@ -91,15 +90,20 @@ class App extends Component {
                 component={Payment}
                 layout="DASHBOARD_NAV"
               />
-              <AdminRoute
+              <DynamicLayoutRoute
                 exact
                 path="/video-gorusme"
                 component={VideoMeeting}
               />
+              <DynamicLayoutRoute
+                exact
+                path="/video-gorusme-test"
+                component={VideoMeetingTest}
+              />
               <CustomerServiceRoute
                 exact
                 path="/customer-service"
-                component={CustomerService}
+                component={CustomerServicePage}
               />
               <DynamicLayoutRoute
                 component={() => (

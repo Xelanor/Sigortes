@@ -1,4 +1,4 @@
-import React, { Component, createRef } from "react";
+import React, { Component } from "react";
 import {
   CallEnd,
   Mic,
@@ -7,80 +7,47 @@ import {
   Home,
   LocalHospital,
 } from "@material-ui/icons";
-import Peer from "peerjs";
 import classNames from "classnames";
 
-class VideoMeeting extends Component {
+class VideoMeetingTest extends Component {
   state = {
     stream: null,
     participantStream: null,
-    hostPeer: null,
+    meetingChoice: "",
     form: {
-      meetingChoice: "",
       name: "",
       surname: "",
     },
   };
 
-  userVideo = createRef();
-  participantRef = createRef();
+  userRef = React.createRef();
+  participantRef = React.createRef();
 
   componentDidMount() {
-    var form = this.state.form;
-    form.meetingChoice = this.props.meetingChoice;
-    this.setState({ form });
-
-    const myPeer = new Peer(undefined, {
-      path: "/peerjs",
-      host: "/",
-      port: "5000",
-    });
-
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then((stream) => {
         this.setState({ stream });
-        if (this.userVideo.current) {
-          this.userVideo.current.srcObject = stream;
+        if (this.userRef.current) {
+          this.userRef.current.srcObject = stream;
         }
-        myPeer.on("call", (call) => {
-          call.answer(stream);
-          call.on("stream", (userVideoStream) => {
-            console.log(userVideoStream);
-            this.setState({ participantStream: userVideoStream });
-            this.participantRef.current.srcObject = userVideoStream;
-          });
-        });
-        this.props.socket.on("host-peer-id", (peer) => {
-          this.setState({ hostPeer: peer });
-          var call = myPeer.call(peer, stream);
-          call.on("stream", (userVideoStream) => {
-            console.log(userVideoStream);
-            this.setState({ participantStream: userVideoStream });
-            this.participantRef.current.srcObject = userVideoStream;
-          });
-        });
       });
-
-    myPeer.on("open", (id) => {
-      this.props.socket.emit("guest-chat-started", {
-        room: this.props.room,
-        peer: id,
+    navigator.mediaDevices
+      .getUserMedia({ video: true, audio: true })
+      .then((stream) => {
+        this.setState({ stream });
+        if (this.participantRef.current) {
+          this.participantRef.current.srcObject = stream;
+        }
       });
-    });
   }
 
   onChoiceClick = (choice) => {
-    var form = this.state.form;
-    var meetingChoice = form.meetingChoice;
+    var meetingChoice = this.state.meetingChoice;
     if (meetingChoice === choice) {
-      form.meetingChoice = "";
-      this.setState({ form });
-      this.props.socket.emit("fill-form", { form, room: this.props.room });
+      this.setState({ meetingChoice: "" });
     } else {
-      form.meetingChoice = choice;
-      this.setState({ form });
-      this.props.socket.emit("fill-form", { form, room: this.props.room });
+      this.setState({ meetingChoice: choice });
     }
   };
 
@@ -88,7 +55,6 @@ class VideoMeeting extends Component {
     var form = this.state.form;
     form[e.target.name] = e.target.value;
     this.setState({ form });
-    this.props.socket.emit("fill-form", { form, room: this.props.room });
   };
 
   render() {
@@ -101,19 +67,19 @@ class VideoMeeting extends Component {
             minHeight: "100%",
           }}
           playsInline
-          muted
-          ref={this.userVideo}
+          ref={this.userRef}
           autoPlay
         />
       );
     }
 
     let ParticipantVideo;
-    if (this.state.participantStream) {
+    if (this.state.stream) {
       ParticipantVideo = (
         <video playsInline muted ref={this.participantRef} autoPlay />
       );
     }
+
     return (
       <div
         style={{ minHeight: "calc(100vh - 6.5rem)" }}
@@ -132,7 +98,7 @@ class VideoMeeting extends Component {
               fontSize: 0,
             }}
           >
-            {UserVideo}
+            {/* {UserVideo} */}
             <div
               style={{
                 width: 200,
@@ -142,7 +108,7 @@ class VideoMeeting extends Component {
                 position: "absolute",
               }}
             >
-              {ParticipantVideo}
+              {/* {ParticipantVideo} */}
             </div>
             <div
               className="flex justify-center w-full"
@@ -188,10 +154,8 @@ class VideoMeeting extends Component {
                 onClick={() => this.onChoiceClick("car")}
                 className={classNames({
                   "flex flex-col items-center justify-center h-40 w-48 rounded-lg mr-16 cursor-pointer select-none": true,
-                  "bg-white text-sigortes":
-                    this.state.form.meetingChoice !== "car",
-                  "bg-sigortes text-white":
-                    this.state.form.meetingChoice === "car",
+                  "bg-white text-sigortes": this.state.meetingChoice !== "car",
+                  "bg-sigortes text-white": this.state.meetingChoice === "car",
                 })}
               >
                 <DirectionsCar style={{ fontSize: 40 }} />
@@ -207,9 +171,9 @@ class VideoMeeting extends Component {
                 className={classNames({
                   "flex flex-col items-center justify-center h-40 w-48 rounded-lg mr-16 cursor-pointer select-none": true,
                   "bg-white text-sigortes":
-                    this.state.form.meetingChoice !== "house",
+                    this.state.meetingChoice !== "house",
                   "bg-sigortes text-white":
-                    this.state.form.meetingChoice === "house",
+                    this.state.meetingChoice === "house",
                 })}
               >
                 <Home style={{ fontSize: 40 }} />
@@ -225,9 +189,9 @@ class VideoMeeting extends Component {
                 className={classNames({
                   "flex flex-col items-center justify-center h-40 w-48 rounded-lg cursor-pointer select-none": true,
                   "bg-white text-sigortes":
-                    this.state.form.meetingChoice !== "health",
+                    this.state.meetingChoice !== "health",
                   "bg-sigortes text-white":
-                    this.state.form.meetingChoice === "health",
+                    this.state.meetingChoice === "health",
                 })}
               >
                 <LocalHospital style={{ fontSize: 40 }} />
@@ -282,4 +246,4 @@ class VideoMeeting extends Component {
   }
 }
 
-export default VideoMeeting;
+export default VideoMeetingTest;
