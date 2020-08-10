@@ -82,7 +82,7 @@ class Homepage extends Component {
           <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col md:flex-row">
               <div className="md:w-2/5 pr-4">
-                <img className="" src={CarCrash} alt="dollar" />
+                <img className="rounded-lg" src={CarCrash} alt="dollar" />
               </div>
               <div className="md:w-3/5 flex flex-col pl-4">
                 <div className="text-lg md:text-2xl leading-7 font-medium mb-6 mt-4 md:mt-0">
