@@ -27,24 +27,28 @@ module.exports = function (io, socket) {
     console.log(`Room: ${room} established`);
   });
 
-  socket.on("meeting request", ({ name }) => {
+  socket.on("meeting request", ({ subject }) => {
     // Meeting request comes from a client and attach to hosts randomly
-    console.log(`${name} has a meeting request`);
+    console.log(
+      `Socket: ${socket.id} has a meeting request with subject: ${subject}`
+    );
     Room.find({ available: true }).then((res) => {
       const room = res[Math.floor(Math.random() * res.length)]; // Find the room from availables randomly
       const room_name = room.room_name;
       socket.join(room_name); // Client joined socket room
-      socket
-        .to(room_name)
-        .emit("host meeting request", { name, socket: socket.id }); // Sent connection request to host, NOT SENDER
+      socket.to(room_name).emit("host meeting request", {
+        name: socket.id,
+        socket: socket.id,
+        subject,
+      }); // Sent connection request to host, NOT SENDER
       rooms[room_name]["clients"].push(socket.id); // Client added to rooms object
-      console.log(`${name} joined ${room_name}`);
+      console.log(`${socket.id} joined ${room_name}`);
     });
   });
 
   socket.on(
     "request accepted",
-    ({ guest_socket, room, guest_name, host_name }) => {
+    ({ guest_socket, room, guest_name, host_name, peer }) => {
       // As host accept one of the request, reject the rests
       rooms[room]["clients"].forEach((client) => {
         client !== guest_socket && io.to(client).emit("request denied message");
@@ -54,17 +58,27 @@ module.exports = function (io, socket) {
         (val) => val === guest_socket
       );
 
-      // Create host and guest tokens
-      let token_guest = videoToken(guest_name, room, config);
-      let token_host = videoToken(host_name, room, config);
-      token_guest = token_guest.toJwt();
-      token_host = token_host.toJwt();
+      io.sockets.connected[guest_socket].join(room);
 
-      // Send tokens to host and client
-      socket.emit("receive token", token_host); // Send token to host
-      io.to(guest_socket).emit("receive token", token_guest); // Send to accepted client
+      io.to(guest_socket).emit("request accepted message", room); // Send to accepted client
+      rooms[room]["host_peer"] = peer;
+
+      // // Create host and guest tokens
+      // let token_guest = videoToken(guest_name, room, config);
+      // let token_host = videoToken(host_name, room, config);
+      // token_guest = token_guest.toJwt();
+      // token_host = token_host.toJwt();
+
+      // // Send tokens to host and client
+      // socket.emit("receive token", token_host); // Send token to host
+      // io.to(guest_socket).emit("receive token", token_guest); // Send to accepted client
     }
   );
+
+  socket.on("guest-chat-started", ({ room, peer }) => {
+    io.to(rooms[room]["host"]).emit("guest-peer-id", peer);
+    socket.emit("host-peer-id", rooms[room]["host_peer"]); // Send to accepted client
+  });
 
   socket.on("request denied", ({ socket, room }) => {
     // As host rejects a request, inform the client
@@ -72,6 +86,10 @@ module.exports = function (io, socket) {
     rooms[room]["clients"] = rooms[room]["clients"].filter(
       (val) => val !== socket
     );
+  });
+
+  socket.on("fill-form", ({ form, room }) => {
+    socket.to(room).emit("filling-form", form);
   });
 
   socket.on("disconnect", () => {

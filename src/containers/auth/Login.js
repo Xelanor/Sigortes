@@ -50,7 +50,7 @@ class Login extends Component {
     const { errors } = this.state;
     return (
       <div
-        style={{ minHeight: "calc(100vh - 4rem)" }}
+        style={{ minHeight: "calc(100vh - 7rem)" }}
         class="flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8"
       >
         <div class="max-w-md w-full">

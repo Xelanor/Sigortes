@@ -30,7 +30,7 @@ router.route("/available").post((req, res) => {
 
 router.route("/available").get((req, res) => {
   Room.find({ available: true })
-    .then((room) => res.json(room.length))
+    .then((rooms) => res.json(rooms))
     .catch((err) => res.status(400).json("Error: " + err));
 });
 
