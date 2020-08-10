@@ -2,8 +2,9 @@ import React from "react";
 import { Route, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import Header from "../../components/layout/Header";
+import Header from "../layout/Header/Header";
 import AdminHeader from "../../components/layout/AdminHeader";
+import Footer from "../layout/Footer";
 
 const PrivateRoute = (props) => {
   const { component: Component, layout, auth, ...rest } = props;
@@ -26,6 +27,7 @@ const PrivateRoute = (props) => {
         <>
           <Header />
           {actualRouteComponent}
+          <Footer />
         </>
       );
     }
@@ -34,6 +36,7 @@ const PrivateRoute = (props) => {
         <>
           <AdminHeader />
           {actualRouteComponent}
+          <Footer />
         </>
       );
     }
@@ -42,6 +45,7 @@ const PrivateRoute = (props) => {
         <>
           <Header />
           {actualRouteComponent}
+          <Footer />
         </>
       );
     }
