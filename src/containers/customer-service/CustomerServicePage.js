@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import axios from "axios";
 import io from "socket.io-client";
-import Peer from "peerjs";
 import classNames from "classnames";
 
 import Transition from "../../components/transition/Transition";
@@ -15,7 +14,6 @@ class CustomerServicePage extends Component {
     available: false,
     requests: [],
     token: null,
-    guestPeer: null,
   };
 
   componentDidMount() {
@@ -52,10 +50,6 @@ class CustomerServicePage extends Component {
       requests = requests.filter((req) => req.socket !== client);
       this.setState({ requests });
     });
-
-    this.socket.on("guest-peer-id", (peer) => {
-      this.setState({ guestPeer: peer });
-    });
   }
 
   onAvailableButtonClick = (e) => {
@@ -82,20 +76,11 @@ class CustomerServicePage extends Component {
   };
 
   onRequestAccepted = (socket, name) => {
-    this.myPeer = new Peer(undefined, {
-      path: "/peerjs",
-      host: "/",
-      port: "5000",
-    });
-
-    this.myPeer.on("open", (id) => {
-      this.socket.emit("request accepted", {
-        guest_socket: socket,
-        room: this.props.auth.user.room,
-        guest_name: name,
-        host_name: this.props.auth.user.name,
-        peer: id,
-      });
+    this.socket.emit("request accepted", {
+      guest_socket: socket,
+      room: this.props.auth.user.room,
+      guest_name: name,
+      host_name: this.props.auth.user.name,
     });
 
     this.setState({ requests: [] });
@@ -125,7 +110,7 @@ class CustomerServicePage extends Component {
         className="flex flex-col items-center"
       >
         <Transition
-          show={!this.state.guestPeer}
+          show={!this.state.token}
           enter="transition ease-out duration-100"
           enterFrom="transform opacity-0 scale-95"
           enterTo="transform opacity-100 scale-100"
@@ -177,7 +162,7 @@ class CustomerServicePage extends Component {
           </div>
         </Transition>
         <Transition
-          show={this.state.guestPeer}
+          show={this.state.token}
           enter="transition ease-out duration-100"
           enterFrom="transform opacity-0 scale-95"
           enterTo="transform opacity-100 scale-100"

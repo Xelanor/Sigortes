@@ -6,18 +6,12 @@ const bodyParser = require("body-parser");
 const passport = require("passport");
 const path = require("path");
 const morgan = require("morgan");
-const { ExpressPeerServer } = require("peer");
 
 require("dotenv").config();
 
 const app = express();
 const server = require("http").Server(app);
 const port = process.env.PORT || 5000;
-
-const peerServer = ExpressPeerServer(server, {
-  debug: true,
-});
-app.use("/peerjs", peerServer);
 
 app.use(morgan("dev"));
 // Bodyparser middleware

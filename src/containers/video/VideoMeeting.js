@@ -1,4 +1,4 @@
-import React, { Component, createRef } from "react";
+import React, { Component } from "react";
 import {
   CallEnd,
   Mic,
@@ -7,14 +7,10 @@ import {
   Home,
   LocalHospital,
 } from "@material-ui/icons";
-import Peer from "peerjs";
 import classNames from "classnames";
 
 class VideoMeeting extends Component {
   state = {
-    stream: null,
-    participantStream: null,
-    hostPeer: null,
     form: {
       meetingChoice: "",
       name: "",
@@ -22,52 +18,10 @@ class VideoMeeting extends Component {
     },
   };
 
-  userVideo = createRef();
-  participantRef = createRef();
-
   componentDidMount() {
     var form = this.state.form;
     form.meetingChoice = this.props.meetingChoice;
     this.setState({ form });
-
-    const myPeer = new Peer(undefined, {
-      path: "/peerjs",
-      host: "/",
-      port: "5000",
-    });
-
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
-      .then((stream) => {
-        this.setState({ stream });
-        if (this.userVideo.current) {
-          this.userVideo.current.srcObject = stream;
-        }
-        myPeer.on("call", (call) => {
-          call.answer(stream);
-          call.on("stream", (userVideoStream) => {
-            console.log(userVideoStream);
-            this.setState({ participantStream: userVideoStream });
-            this.participantRef.current.srcObject = userVideoStream;
-          });
-        });
-        this.props.socket.on("host-peer-id", (peer) => {
-          this.setState({ hostPeer: peer });
-          var call = myPeer.call(peer, stream);
-          call.on("stream", (userVideoStream) => {
-            console.log(userVideoStream);
-            this.setState({ participantStream: userVideoStream });
-            this.participantRef.current.srcObject = userVideoStream;
-          });
-        });
-      });
-
-    myPeer.on("open", (id) => {
-      this.props.socket.emit("guest-chat-started", {
-        room: this.props.room,
-        peer: id,
-      });
-    });
   }
 
   onChoiceClick = (choice) => {
@@ -92,28 +46,6 @@ class VideoMeeting extends Component {
   };
 
   render() {
-    let UserVideo;
-    if (this.state.stream) {
-      UserVideo = (
-        <video
-          style={{
-            minWidth: "100%",
-            minHeight: "100%",
-          }}
-          playsInline
-          muted
-          ref={this.userVideo}
-          autoPlay
-        />
-      );
-    }
-
-    let ParticipantVideo;
-    if (this.state.participantStream) {
-      ParticipantVideo = (
-        <video playsInline muted ref={this.participantRef} autoPlay />
-      );
-    }
     return (
       <div
         style={{ minHeight: "calc(100vh - 6.5rem)" }}
@@ -132,7 +64,6 @@ class VideoMeeting extends Component {
               fontSize: 0,
             }}
           >
-            {UserVideo}
             <div
               style={{
                 width: 200,
@@ -141,9 +72,7 @@ class VideoMeeting extends Component {
                 backgroundColor: "blue",
                 position: "absolute",
               }}
-            >
-              {ParticipantVideo}
-            </div>
+            ></div>
             <div
               className="flex justify-center w-full"
               style={{ bottom: 10, position: "absolute" }}

@@ -1,4 +1,4 @@
-import React, { Component, createRef } from "react";
+import React, { Component } from "react";
 import {
   CallEnd,
   Mic,
@@ -13,7 +13,6 @@ class VideoMeeting extends Component {
   state = {
     stream: null,
     participantStream: null,
-    guestPeer: null,
     form: {
       meetingChoice: "",
       name: "",
@@ -21,59 +20,13 @@ class VideoMeeting extends Component {
     },
   };
 
-  userVideo = createRef();
-  participantRef = createRef();
-
   componentDidMount() {
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
-      .then((stream) => {
-        this.setState({ stream });
-        if (this.userVideo.current) {
-          this.userVideo.current.srcObject = stream;
-        }
-        this.props.myPeer.on("call", (call) => {
-          call.answer(stream);
-          call.on("stream", (userVideoStream) => {
-            this.setState({ participantStream: userVideoStream });
-            this.participantRef.current.srcObject = userVideoStream;
-          });
-        });
-        const call = this.props.myPeer.call(this.props.guestPeer, stream);
-        call.on("stream", (userVideoStream) => {
-          this.setState({ participantStream: userVideoStream });
-          this.participantRef.current.srcObject = userVideoStream;
-        });
-      });
-
     this.props.socket.on("filling-form", (form) => {
       this.setState({ form });
     });
   }
 
   render() {
-    let UserVideo;
-    if (this.state.stream) {
-      UserVideo = (
-        <video
-          style={{
-            minWidth: "100%",
-            minHeight: "100%",
-          }}
-          playsInline
-          muted
-          ref={this.userVideo}
-          autoPlay
-        />
-      );
-    }
-
-    let ParticipantVideo;
-    if (this.state.participantStream) {
-      ParticipantVideo = (
-        <video playsInline muted ref={this.participantRef} autoPlay />
-      );
-    }
     return (
       <div
         style={{ minHeight: "calc(100vh - 6.5rem)" }}
@@ -89,7 +42,6 @@ class VideoMeeting extends Component {
               fontSize: 0,
             }}
           >
-            {UserVideo}
             <div
               style={{
                 width: 200,
@@ -98,9 +50,7 @@ class VideoMeeting extends Component {
                 backgroundColor: "blue",
                 position: "absolute",
               }}
-            >
-              {ParticipantVideo}
-            </div>
+            ></div>
             <div
               className="flex justify-center w-full"
               style={{ bottom: 10, position: "absolute" }}
