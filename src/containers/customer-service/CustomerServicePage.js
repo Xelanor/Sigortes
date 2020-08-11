@@ -45,6 +45,11 @@ class CustomerServicePage extends Component {
       this.setState({ requests });
     });
 
+    this.socket.on("receive token", (messageFromBackend) => {
+      console.log("Token: " + messageFromBackend);
+      this.setState({ token: messageFromBackend });
+    });
+
     this.socket.on("client disconnected", (client) => {
       let requests = this.state.requests;
       requests = requests.filter((req) => req.socket !== client);
@@ -170,11 +175,7 @@ class CustomerServicePage extends Component {
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <VideoMeeting
-            socket={this.socket}
-            myPeer={this.myPeer}
-            guestPeer={this.state.guestPeer}
-          />
+          <VideoMeeting socket={this.socket} token={this.state.token} />
         </Transition>
       </div>
     );

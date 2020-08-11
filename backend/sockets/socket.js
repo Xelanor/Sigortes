@@ -48,7 +48,7 @@ module.exports = function (io, socket) {
 
   socket.on(
     "request accepted",
-    ({ guest_socket, room, guest_name, host_name, peer }) => {
+    ({ guest_socket, room, guest_name, host_name }) => {
       // As host accept one of the request, reject the rests
       rooms[room]["clients"].forEach((client) => {
         client !== guest_socket && io.to(client).emit("request denied message");
@@ -60,25 +60,20 @@ module.exports = function (io, socket) {
 
       io.sockets.connected[guest_socket].join(room);
 
-      io.to(guest_socket).emit("request accepted message", room); // Send to accepted client
-      rooms[room]["host_peer"] = peer;
+      // Create host and guest tokens
+      let token_guest = videoToken(guest_name, room, config);
+      let token_host = videoToken(host_name, room, config);
+      token_guest = token_guest.toJwt();
+      token_host = token_host.toJwt();
 
-      // // Create host and guest tokens
-      // let token_guest = videoToken(guest_name, room, config);
-      // let token_host = videoToken(host_name, room, config);
-      // token_guest = token_guest.toJwt();
-      // token_host = token_host.toJwt();
-
-      // // Send tokens to host and client
-      // socket.emit("receive token", token_host); // Send token to host
-      // io.to(guest_socket).emit("receive token", token_guest); // Send to accepted client
+      // Send tokens to host and client
+      socket.emit("receive token", token_host); // Send token to host
+      io.to(guest_socket).emit("receive token", {
+        token: token_guest,
+        room: room,
+      }); // Send to accepted client
     }
   );
-
-  socket.on("guest-chat-started", ({ room, peer }) => {
-    io.to(rooms[room]["host"]).emit("guest-peer-id", peer);
-    socket.emit("host-peer-id", rooms[room]["host_peer"]); // Send to accepted client
-  });
 
   socket.on("request denied", ({ socket, room }) => {
     // As host rejects a request, inform the client

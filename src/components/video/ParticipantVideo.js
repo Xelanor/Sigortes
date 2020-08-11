@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 
-const Participant = ({ participant }) => {
+const ParticipantVideo = ({ participant }) => {
   const [videoTracks, setVideoTracks] = useState([]);
   const [audioTracks, setAudioTracks] = useState([]);
 
@@ -63,12 +63,18 @@ const Participant = ({ participant }) => {
   }, [audioTracks]);
 
   return (
-    <div>
-      <h5>{participant.identity}</h5>
-      <video style={{ width: "430px" }} ref={videoRef} autoPlay={true} />
+    <>
+      <video
+        style={{
+          minWidth: "100%",
+          minHeight: "100%",
+        }}
+        ref={videoRef}
+        autoPlay={true}
+      />
       <audio ref={audioRef} autoPlay={true} />
-    </div>
+    </>
   );
 };
 
-export default Participant;
+export default ParticipantVideo;

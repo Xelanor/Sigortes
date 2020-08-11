@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import Video from "twilio-video";
 import {
   CallEnd,
   Mic,
@@ -9,8 +10,12 @@ import {
 } from "@material-ui/icons";
 import classNames from "classnames";
 
+import Participant from "../../components/video/ParticipantVideo";
+
 class VideoMeeting extends Component {
   state = {
+    room: null,
+    participant: null,
     form: {
       meetingChoice: "",
       name: "",
@@ -19,9 +24,47 @@ class VideoMeeting extends Component {
   };
 
   componentDidMount() {
+    window.addEventListener("beforeunload", () => {
+      this.state.room.disconnect();
+    });
+
     var form = this.state.form;
     form.meetingChoice = this.props.meetingChoice;
     this.setState({ form });
+
+    const participantConnected = (participant) => {
+      this.setState({ participant });
+    };
+
+    const participantDisconnected = (participant) => {
+      console.log(`Participant ${participant} Disconnected`);
+      this.setState({ participant: null });
+    };
+
+    Video.connect(this.props.token, {
+      name: this.props.room,
+    }).then((room) => {
+      this.setState({ room });
+      room.on("participantConnected", participantConnected);
+      room.on("participantDisconnected", participantDisconnected);
+      room.on("disconnected", (room) => {
+        // handleLogout();
+      });
+      room.participants.forEach(participantConnected);
+    });
+  }
+
+  componentWillUnmount() {
+    var currentRoom = this.state.room;
+    if (currentRoom && currentRoom.localParticipant.state === "connected") {
+      currentRoom.localParticipant.tracks.forEach(function (trackPublication) {
+        trackPublication.track.stop();
+      });
+      currentRoom.disconnect();
+      return null;
+    } else {
+      return currentRoom;
+    }
   }
 
   onChoiceClick = (choice) => {
@@ -46,6 +89,26 @@ class VideoMeeting extends Component {
   };
 
   render() {
+    let myVideo;
+    if (this.state.room) {
+      myVideo = (
+        <Participant
+          key={this.state.room.localParticipant.sid}
+          participant={this.state.room.localParticipant}
+        />
+      );
+    }
+
+    let guestVideo;
+    if (this.state.participant) {
+      guestVideo = (
+        <Participant
+          key={this.state.participant.sid}
+          participant={this.state.participant}
+        />
+      );
+    }
+
     return (
       <div
         style={{ minHeight: "calc(100vh - 6.5rem)" }}
@@ -64,6 +127,7 @@ class VideoMeeting extends Component {
               fontSize: 0,
             }}
           >
+            {myVideo}
             <div
               style={{
                 width: 200,
@@ -72,7 +136,9 @@ class VideoMeeting extends Component {
                 backgroundColor: "blue",
                 position: "absolute",
               }}
-            ></div>
+            >
+              {guestVideo}
+            </div>
             <div
               className="flex justify-center w-full"
               style={{ bottom: 10, position: "absolute" }}

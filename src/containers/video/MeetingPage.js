@@ -16,6 +16,7 @@ class MeetingPage extends Component {
     waiting: false,
     waiting_message: "",
     room: null,
+    token: null,
   };
 
   componentDidMount() {
@@ -54,9 +55,9 @@ class MeetingPage extends Component {
       this.setState({ waiting_message: "REDDİLDİ", waiting: false });
     });
 
-    this.socket.on("request accepted message", (room) => {
-      console.log("Room: " + room);
-      this.setState({ waiting: false, room: room });
+    this.socket.on("receive token", ({ token, room }) => {
+      console.log("Token: " + token);
+      this.setState({ token, room });
     });
   }
 
@@ -113,7 +114,7 @@ class MeetingPage extends Component {
           </div>
         </Transition>
         <Transition
-          show={!this.state.room}
+          show={!this.state.token}
           enter="transition ease-out duration-100"
           enterFrom="transform opacity-0 scale-95"
           enterTo="transform opacity-100 scale-100"
@@ -131,7 +132,7 @@ class MeetingPage extends Component {
           />
         </Transition>
         <Transition
-          show={this.state.room}
+          show={this.state.token}
           enter="transition ease-out duration-100"
           enterFrom="transform opacity-0 scale-95"
           enterTo="transform opacity-100 scale-100"
@@ -141,6 +142,7 @@ class MeetingPage extends Component {
         >
           <VideoMeeting
             socket={this.socket}
+            token={this.state.token}
             room={this.state.room}
             meetingChoice={this.state.meetingChoice}
           />
