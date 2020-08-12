@@ -14,6 +14,7 @@ class CustomerServicePage extends Component {
     available: false,
     requests: [],
     token: null,
+    disconnected: false,
   };
 
   componentDidMount() {
@@ -54,6 +55,10 @@ class CustomerServicePage extends Component {
       let requests = this.state.requests;
       requests = requests.filter((req) => req.socket !== client);
       this.setState({ requests });
+    });
+
+    this.socket.on("disconnect", () => {
+      this.setState({ requests: [], disconnected: true, available: false });
     });
   }
 
@@ -129,19 +134,28 @@ class CustomerServicePage extends Component {
                 {user.name} {user.surname}
               </div>
             </div>
-            <div className="text-2xl">
-              Görüntülü görüşme talepleri için uygun musun?
-            </div>
-            <button
-              className={classNames({
-                "mt-2 p-1 text-white": true,
-                "bg-green-400": this.state.available,
-                "bg-red-400": !this.state.available,
-              })}
-              onClick={this.onAvailableButtonClick}
-            >
-              {this.state.available ? "Uygun Değilim" : "Uygunum"}
-            </button>
+            {this.state.disconnected ? (
+              <div>
+                Server ile bağlantınız kesilmiştir veya yeni bir sekmede
+                açılmıştır.
+              </div>
+            ) : (
+              <>
+                <div className="text-2xl">
+                  Görüntülü görüşme talepleri için uygun musun?
+                </div>
+                <button
+                  className={classNames({
+                    "mt-2 p-1 text-white": true,
+                    "bg-green-400": this.state.available,
+                    "bg-red-400": !this.state.available,
+                  })}
+                  onClick={this.onAvailableButtonClick}
+                >
+                  {this.state.available ? "Uygun Değilim" : "Uygunum"}
+                </button>
+              </>
+            )}
           </div>
         </Transition>
         <Transition

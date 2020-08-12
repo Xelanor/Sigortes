@@ -17,9 +17,14 @@ module.exports = function (io, socket) {
   });
 
   socket.on("join room", ({ room }) => {
-    // TODO: If same room host connects more than 1, disconnect previous
     // When a host connects, joins a room
     socket.join(room);
+    if (room in rooms) {
+      // This room created previously
+      console.log("This room created previously");
+      let host = rooms[room]["host"];
+      io.sockets.connected[host].disconnect();
+    }
     rooms[room] = {};
     rooms[room]["clients"] = [];
     rooms[room]["host"] = socket.id;
@@ -59,6 +64,12 @@ module.exports = function (io, socket) {
       );
 
       io.sockets.connected[guest_socket].join(room);
+      // When a conversation starts, make host busy
+      io.emit("availability output", { available: false, room });
+      Room.findOneAndUpdate(
+        { room_name: room },
+        { $set: { available: false } }
+      );
 
       // Create host and guest tokens
       let token_guest = videoToken(guest_name, room, config);
@@ -96,6 +107,11 @@ module.exports = function (io, socket) {
         const room = hosts[socket.id];
         delete hosts[socket.id];
         io.emit("availability output", { available: false, room });
+        // If guest requested and host disconnects reject the guest
+        rooms[room]["clients"].forEach((client) => {
+          io.to(client).emit("request denied message");
+        });
+        delete rooms[room];
         await Room.findOneAndUpdate(
           { room_name: room },
           { $set: { available: false } }
