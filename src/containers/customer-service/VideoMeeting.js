@@ -1,13 +1,6 @@
 import React, { Component } from "react";
 import Video from "twilio-video";
-import {
-  CallEnd,
-  Mic,
-  Videocam,
-  DirectionsCar,
-  Home,
-  LocalHospital,
-} from "@material-ui/icons";
+import { DirectionsCar, Home, LocalHospital } from "@material-ui/icons";
 import classNames from "classnames";
 
 import Participant from "../../components/video/ParticipantVideo";

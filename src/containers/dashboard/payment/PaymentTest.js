@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import axios from "axios";
-import Cards from "react-credit-cards";
 import "react-credit-cards/es/styles-compiled.css";
 import Loader from "react-loader-spinner";
 
@@ -8,7 +7,6 @@ import {
   formatCreditCardNumber,
   formatCVC,
   formatExpirationDate,
-  formatFormData,
 } from "../../../utils/paymentFormatter";
 
 class Payment extends Component {
