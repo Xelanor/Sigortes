@@ -86,6 +86,10 @@ class MeetingPage extends Component {
     }
   };
 
+  onVideoExit = () => {
+    this.setState({ token: null });
+  };
+
   render() {
     return (
       <div>
@@ -145,6 +149,7 @@ class MeetingPage extends Component {
             token={this.state.token}
             room={this.state.room}
             meetingChoice={this.state.meetingChoice}
+            handleLogout={this.onVideoExit}
           />
         </Transition>
       </div>

@@ -103,7 +103,6 @@ class CustomerServicePage extends Component {
   };
 
   onVideoExit = () => {
-    // TODO: Video exit button
     this.setState({ token: null });
   };
 
@@ -123,7 +122,7 @@ class CustomerServicePage extends Component {
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <div className="flex flex-col mb-2 mt-8">
+          <div className="flex flex-col mb-2 mt-8 mx-4">
             <div className="flex">
               <div className="text-2xl">Selam, &nbsp;</div>
               <div className="text-2xl font-bold">
@@ -175,7 +174,11 @@ class CustomerServicePage extends Component {
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <VideoMeeting socket={this.socket} token={this.state.token} />
+          <VideoMeeting
+            socket={this.socket}
+            token={this.state.token}
+            handleLogout={this.onVideoExit}
+          />
         </Transition>
       </div>
     );

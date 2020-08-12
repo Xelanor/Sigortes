@@ -11,11 +11,14 @@ import {
 import classNames from "classnames";
 
 import Participant from "../../components/video/ParticipantVideo";
+import VideoControls from "../../components/video/VideoControls";
 
 class VideoMeeting extends Component {
   state = {
     room: null,
     participant: null,
+    muted: false,
+    videoCam: true,
     form: {
       meetingChoice: "",
       name: "",
@@ -48,7 +51,7 @@ class VideoMeeting extends Component {
       room.on("participantConnected", participantConnected);
       room.on("participantDisconnected", participantDisconnected);
       room.on("disconnected", (room) => {
-        // handleLogout();
+        this.props.handleLogout();
       });
       room.participants.forEach(participantConnected);
     });
@@ -66,6 +69,34 @@ class VideoMeeting extends Component {
       return currentRoom;
     }
   }
+
+  onMuteButtonClick = () => {
+    if (this.state.muted) {
+      this.setState({ muted: false });
+      this.state.room.localParticipant.audioTracks.forEach((publication) => {
+        publication.track.enable();
+      });
+    } else {
+      this.setState({ muted: true });
+      this.state.room.localParticipant.audioTracks.forEach((publication) => {
+        publication.track.disable();
+      });
+    }
+  };
+
+  onVideocamButtonClick = () => {
+    if (this.state.videoCam) {
+      this.setState({ videoCam: false });
+      this.state.room.localParticipant.videoTracks.forEach((publication) => {
+        publication.track.disable();
+      });
+    } else {
+      this.setState({ videoCam: true });
+      this.state.room.localParticipant.videoTracks.forEach((publication) => {
+        publication.track.enable();
+      });
+    }
+  };
 
   render() {
     let myVideo;
@@ -103,7 +134,7 @@ class VideoMeeting extends Component {
               fontSize: 0,
             }}
           >
-            {myVideo}
+            {guestVideo}
             <div
               style={{
                 width: 200,
@@ -113,44 +144,16 @@ class VideoMeeting extends Component {
                 position: "absolute",
               }}
             >
-              {guestVideo}
-            </div>
-            <div
-              className="flex justify-center w-full"
-              style={{ bottom: 10, position: "absolute" }}
-            >
-              <div
-                className="flex justify-center items-center rounded-full p-5 mr-4"
-                style={{
-                  width: 30,
-                  height: 30,
-                  backgroundColor: "blue",
-                }}
-              >
-                <Mic style={{ color: "white" }} />
-              </div>
-              <div
-                className="flex justify-center items-center rounded-full p-5 mr-4"
-                style={{
-                  width: 30,
-                  height: 30,
-                  backgroundColor: "red",
-                }}
-              >
-                <CallEnd style={{ color: "white" }} />
-              </div>
-              <div
-                className="flex justify-center items-center rounded-full p-5"
-                style={{
-                  width: 30,
-                  height: 30,
-                  backgroundColor: "blue",
-                }}
-              >
-                <Videocam style={{ color: "white" }} />
-              </div>
+              {myVideo}
             </div>
           </div>
+          <VideoControls
+            muted={this.state.muted}
+            onMuteButtonClick={this.onMuteButtonClick}
+            videoCam={this.state.videoCam}
+            onVideocamButtonClick={this.onVideocamButtonClick}
+            logout={this.props.handleLogout}
+          />
         </div>
         <div className="w-full flex flex-col mx-12 bg-gray-100 py-4">
           <div className="flex justify-center">
