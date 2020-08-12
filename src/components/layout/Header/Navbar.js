@@ -168,13 +168,13 @@ class Navbar extends Component {
                             >
                               Ayarlar
                             </Link>
-                            <Link
-                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                            <div
+                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
                               role="menuitem"
                               onClick={this.onLogoutClick}
                             >
                               Çıkış Yap
-                            </Link>
+                            </div>
                           </div>
                         </div>
                       </Transition>

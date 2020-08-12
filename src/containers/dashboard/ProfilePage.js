@@ -6,9 +6,9 @@ class ProfilePage extends Component {
   state = {};
 
   componentDidMount() {
-    // If logged in and user navigates to Register page, should redirect them to dashboard
+    // If not logged in navigates to Profile page, should redirect them to login
     if (!this.props.auth.isAuthenticated) {
-      this.props.history.push("/dashboard");
+      this.props.history.push("/login");
     }
   }
 
@@ -144,7 +144,6 @@ class ProfilePage extends Component {
 }
 
 ProfilePage.propTypes = {
-  logoutUser: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
 };
 const mapStateToProps = (state) => ({
