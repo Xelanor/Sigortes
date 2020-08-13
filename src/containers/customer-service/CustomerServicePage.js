@@ -191,6 +191,7 @@ class CustomerServicePage extends Component {
           <VideoMeeting
             socket={this.socket}
             token={this.state.token}
+            room={this.props.auth.user.room}
             handleLogout={this.onVideoExit}
           />
         </Transition>

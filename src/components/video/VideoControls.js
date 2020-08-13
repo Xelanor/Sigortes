@@ -12,6 +12,7 @@ import classNames from "classnames";
 const MainControlsBlock = styled.div`
   background-color: #1d273b;
   padding: 5px;
+  height: 70px;
 `;
 
 const MainControlsButton = styled.div`

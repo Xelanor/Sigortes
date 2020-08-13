@@ -63,7 +63,6 @@ module.exports = function (io, socket) {
         (val) => val === guest_socket
       );
 
-      io.sockets.connected[guest_socket].join(room);
       // When a conversation starts, make host busy
       io.emit("availability output", { available: false, room });
       Room.findOneAndUpdate(
@@ -96,6 +95,10 @@ module.exports = function (io, socket) {
 
   socket.on("fill-form", ({ form, room }) => {
     socket.to(room).emit("filling-form", form);
+  });
+
+  socket.on("send-message", ({ message, room }) => {
+    socket.to(room).emit("chat-message", message);
   });
 
   socket.on("disconnect", () => {

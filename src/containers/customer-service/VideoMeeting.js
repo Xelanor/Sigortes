@@ -5,9 +5,11 @@ import classNames from "classnames";
 
 import Participant from "../../components/video/ParticipantVideo";
 import VideoControls from "../../components/video/VideoControls";
+import VideoChat from "../../components/video/VideoChat";
 
 class VideoMeeting extends Component {
   state = {
+    messages: [],
     room: null,
     participant: null,
     muted: false,
@@ -47,6 +49,12 @@ class VideoMeeting extends Component {
         this.props.handleLogout();
       });
       room.participants.forEach(participantConnected);
+    });
+
+    this.props.socket.on("chat-message", (message) => {
+      let messages = [...this.state.messages];
+      messages.push(message);
+      this.setState({ messages });
     });
   }
 
@@ -91,6 +99,27 @@ class VideoMeeting extends Component {
     }
   };
 
+  onChangeTextMessage = (e) => {
+    this.setState({ textMessage: e.target.value });
+  };
+
+  onSendChatMessage = () => {
+    if (this.state.textMessage !== "") {
+      const message = {
+        name: this.props.socket.id,
+        text: this.state.textMessage,
+        date: Date.now(),
+      };
+      let messages = [...this.state.messages];
+      messages.push(message);
+      this.props.socket.emit("send-message", {
+        message,
+        room: this.props.room,
+      });
+      this.setState({ messages, textMessage: "" });
+    }
+  };
+
   render() {
     let myVideo;
     if (this.state.room) {
@@ -117,10 +146,10 @@ class VideoMeeting extends Component {
         style={{ minHeight: "calc(100vh - 6.5rem)" }}
         className="flex mx-auto p-4 bg-gray-900 w-full"
       >
-        <div className="">
+        <div className="w-full flex flex-col xl:w-2/5 mb-4">
           <div
             style={{
-              width: 800,
+              width: "100%",
               backgroundColor: "grey",
               position: "relative",
               lineHeight: 0,
@@ -148,7 +177,15 @@ class VideoMeeting extends Component {
             logout={this.props.handleLogout}
           />
         </div>
-        <div className="w-full flex flex-col mx-12 bg-gray-100 py-4">
+        <div className="w-full flex flex-col xl:w-1/5 ml-6">
+          <VideoChat
+            messages={this.state.messages}
+            textMessage={this.state.textMessage}
+            onChangeTextMessage={this.onChangeTextMessage}
+            sendMessage={this.onSendChatMessage}
+          />
+        </div>
+        <div className="w-full xl:w-2/5 flex flex-col ml-6 mr-2 bg-gray-100 py-4 flex-grow overflow-y-auto">
           <div className="flex justify-center">
             <div className="flex mb-4">
               <div
